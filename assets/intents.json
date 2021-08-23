@@ -1,0 +1,133 @@
+{
+    "intents": [
+        {
+            "tag": "noanswer",
+            "patterns": [],
+            "responses": [
+                "Pardonnez-moi, mais je n'ai pas compris.",
+                "Désolé, mais je ne comprend pas votre phrase.",
+                "Mes excuses, mais pouvez-vous reformuler ?"
+            ],
+            "context": []
+        },
+        {
+            "tag": "salutations",
+            "patterns": [
+                "bonjour",
+                "salut",
+                "bien le bonjour",
+                "hello",
+                "salutations"
+            ],
+            "responses": [
+                "Bonjour.",
+                "Que puis-je pour vous ?",
+                "Bienvenue ! 😊"
+            ],
+            "context": []
+        },
+        {
+            "tag": "au_revoir",
+            "patterns": [
+                "au-revoir",
+                "à bientôt",
+                "à plus tard"
+            ],
+            "responses": [
+                "À Bientôt !",
+                "Au plaisir !",
+                "Bonne journée à vous ! 👋",
+                "Bye ! 👋",
+                "Ciao ! 👋"
+            ],
+            "context": []
+        },
+        {
+            "tag": "bot_nom",
+            "patterns": [
+                "quel est ton nom",
+                "quel votre ton nom",
+                "comment te nommes-tu",
+                "comment vous appelez-vous",
+                "comment t'appelles-tu",
+                "c'est quoi ton nom",
+                "c'est quoi votre nom",
+                "quelle est ta désignation",
+                "quelle est votre désignation"
+            ],
+            "responses": [
+                "Je me nomme Botty. 😃"
+            ],
+            "context": []
+        },
+        {
+            "tag": "bot_santé",
+            "patterns": [
+                "comment vas-tu",
+                "comment allez-vous",
+                "comment te sens-tu",
+                "comment vous sentez-vous",
+                "es-tu fonctionnel",
+                "êtes-vous fonctionnel",
+                "ça va"
+            ],
+            "responses": [
+                "Je suis parfaitement fonctionnel. 😉"
+            ],
+            "context": []
+        },
+        {
+            "tag": "bot_capacités",
+            "patterns": [
+                "que peux-tu faire",
+                "que pouvez-vous faire",
+                "quelles sont tes capacités",
+                "quelles sont vos capacités",
+                "quelles options proposes-tu",
+                "quelles options proposez-vous"
+            ],
+            "responses": [
+                "Mes capacités sont limitées, mais je peux répondre à quelques questions sur moi-même."
+            ],
+            "context": []
+        },
+        {
+            "tag": "bot_créateur",
+            "patterns": [
+                "qui est ton créateur",
+                "qui t'a créé",
+                "qui t'a codé",
+                "quelle personne t'a créé"
+            ],
+            "responses": [
+                "J'ai été créé par Alexandre Martos."
+            ],
+            "context": []
+        },
+        {
+            "tag": "bot_univers",
+            "patterns": [
+                "quelle est la réponse à la vie, l'univers et le reste",
+                "quelle est la réponse à la vie, l'univers et de tout ce qui est",
+                "quelle est la réponse ultime",
+                "quelle est la réponse à tout"
+            ],
+            "responses": [
+                "42"
+            ],
+            "context": []
+        },
+        {
+            "tag": "recette_quatre_quart",
+            "patterns": [
+                "quelle est la recette du quatre quart",
+                "la recette du quatre quart",
+                "quelle recette pour le quatre quart"
+            ],
+            "responses": [
+                "Un quart de farine, un quart de sucre, un quart de beurre, et un quart d'oeuf, de la levure pour le faire gonfler, et un peu de citron pour le goût... 😋"
+            ],
+            "context": []
+        }
+    ]
+}
