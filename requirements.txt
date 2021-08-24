@@ -2,3 +2,6 @@ keras
 tensorflow
 nltk
 numpy
+asyncio
+aiofiles
+websockets
