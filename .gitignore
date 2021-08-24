@@ -3,3 +3,4 @@ __pycache__/
 *.ipynb
 *.pkl
 *.h5
+errlogs/

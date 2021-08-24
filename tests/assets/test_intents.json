@@ -1,0 +1,27 @@
+{
+    "intents": [
+        {
+            "tag": "noanswer",
+            "patterns": [],
+            "responses": [
+                "Désolé, mais je ne comprend pas votre phrase."
+            ],
+            "context": []
+        },
+        {
+            "tag": "salutations",
+            "patterns": [
+                "bonjour",
+                "salut",
+                "bien le bonjour",
+                "hello",
+                "salutations"
+            ],
+            "responses": [
+                "Bienvenue ! 😊"
+            ],
+            "context": []
+        }
+    ]
+}
+

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# $1 : le nom du programme
+
+if [ -z "$1" ]
+then
+    echo "veuillez donnez le nom du script de tests"
+    exit 1
+fi
+
+PROGNAME=$1
+EXE=tests.units.$PROGNAME
+TMP=/tmp/$PROGNAME
+LOGS=errlogs
+EXIT_CODE=0
+
+# on nettoie les dossiers de logs précédents, au cas où.
+rm -rf $TMP
+mkdir -p $TMP
+
+# Tests de régression
+filename="$PROGNAME"
+logfile="$filename.log"
+
+rge='\033[0;31m'
+vrt='\033[0;32m'
+blc='\033[0m'
+LEAK="[ ${rge}LEAK${blc} ]"
+FAIL="[ ${rge}FAIL${blc} ]"
+OK="[ ${vrt} OK ${blc} ]"
+STATUS=$OK
+EXIT_CODE=0
+
+# regression test
+python3 -m unittest $EXE 1> $TMP/$logfile 2>&1
+grep -q OK $TMP/$logfile
+if [ $? -ne 0 ]
+then
+    STATUS=$FAIL
+    EXIT_CODE=1
+    mkdir -p $LOGS
+    mv $TMP/$logfile $LOGS/
+fi
+
+# nettoyage
+rm -rf $TMP
+
+echo -e $STATUS "$1"
+exit $EXIT_CODE
