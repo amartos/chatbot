@@ -167,7 +167,8 @@ class ChatBotBrain:
         # compilation du modèle et fitting. Le nombre d'epochs doit être élevé
         # pour plus de précision.
         # Référence :
-        # https://towardsdatascience.com/deep-learning-for-nlp-creating-a-chatbot-with-keras-da5ca051e051
+        # https://towardsdatascience.com/
+        #   deep-learning-for-nlp-creating-a-chatbot-with-keras-da5ca051e051
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
         self._model.compile(
                 loss="categorical_crossentropy",
