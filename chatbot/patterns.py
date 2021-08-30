@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# patterns version 0.1
+# patterns version 0.2
 # Copyright (C) 2021 Alexandre Martos -- alexandre.martos (at) protonmail.ch
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 #               - https://github.com/jerrytigerxu/Simple-Python-Chatbot
 # Auteur  : Martos Alexandre
 # E-mail  : alexandre.martos@protonmail.ch
-# Version : 0.1
+# Version : 0.2
 # Licence : GPLv3
 # Python  : Python 3.9.2
 # Usage   :
@@ -45,10 +45,12 @@ import json
 # cette librairie sauvegarde des objets python dans un fichier, qui peuvent être
 # rechargés par la suite.
 import pickle
-# une librairie de gestion de langage, permet de séparer correctement les mots
-# des phrases et de raciniser (stemming) les mots.
+# une librairie de gestion de langage
 import nltk
-from nltk.stem.snowball import FrenchStemmer
+# permet de séparer correctement les mots des phrases et de lemmatiser
+# (lemmatization) les mots.
+import simplemma
+from simplemma import simple_tokenizer, lemmatize
 # la seule fonction de numpy utilisée, pour créer des tables.
 from numpy import array as nparray
 
@@ -112,11 +114,9 @@ class Patterns:
     """
 
     def __init__(self, path=""):
-        nltk.download("punkt")
-        nltk.download("wordnet")
         nltk.download("stopwords")
-        self._stemmer = FrenchStemmer()
         self._stoplist = nltk.corpus.stopwords.words("french")
+        self._langdata = simplemma.load_data("fr")
 
         if path:
             if not os.path.isfile(path):
@@ -126,7 +126,7 @@ class Patterns:
         else:
             self._patterns = {
                     "tags": {},
-                    "stems": [],
+                    "lemmas": [],
             }
 
     def convert_intents(self, path):
@@ -165,7 +165,7 @@ class Patterns:
         )
         """
         self._parse_intents_file(path)
-        self._sort_all_stems()
+        self._sort_all_lemmas()
         # on récupère le nom de fichier.
         basename = ".".join(path.split(".")[:-1])
         basename = basename.split("/")[-1]
@@ -200,11 +200,11 @@ class Patterns:
         """
         tag = intent["tag"]
         if not tag in self._get_all_tags():
-            self._patterns["tags"][tag] = {"stems": [],"answers": []}
+            self._patterns["tags"][tag] = {"lemmas": [],"answers": []}
 
         self._set_answers(tag, intent["responses"])
-        stems = [self._stemming(p) for p in intent["patterns"]]
-        self._set_stems(tag, stems)
+        lemmas = [self._lemmatize(p) for p in intent["patterns"]]
+        self._set_lemmas(tag, lemmas)
 
     def _get_all_tags(self):
         """
@@ -247,7 +247,7 @@ class Patterns:
         """
         return self._patterns.get("tags").get(tag).get("answers")
 
-    def _stemming(self, pattern):
+    def _lemmatize(self, pattern):
         """
         Tranforme le pattern (== phrase) donné en une liste de radicaux ou
         racines. Voir https://fr.wikipedia.org/wiki/Racinisation
@@ -262,11 +262,10 @@ class Patterns:
         list
             La liste des racines correspondantes au pattern donné.
         """
-        tokenizer = nltk.RegexpTokenizer(r"\w+")
-        tokens = tokenizer.tokenize(pattern)
-        return [self._stemmer.stem(word.lower()) for word in tokens if not word in self._stoplist]
+        tokens = [w for w in simple_tokenizer(pattern) if not w in self._stoplist]
+        return [lemmatize(w, self._langdata) for w in tokens]
 
-    def _set_stems(self, tag, stems):
+    def _set_lemmas(self, tag, lemmas):
         """
         Enregistre les racines dans l'attribut _patterns.
 
@@ -274,19 +273,19 @@ class Patterns:
         ----------
         tag : str
             Le tag décrivant l'intention et correspondant aux racines.
-        stems : list
-            Une liste des stems correspondant à l'intention.
+        lemmas : list
+            Une liste des lemmas correspondant à l'intention.
         """
-        tag_stems = self._get_stems(tag)
-        all_stems = self._get_all_stems()
-        for l in stems:
+        tag_lemmas = self._get_lemmas(tag)
+        all_lemmas = self._get_all_lemmas()
+        for l in lemmas:
             for w in l:
-                if not w in tag_stems:
-                    self._patterns["tags"][tag]["stems"].append(w)
-                if not w in all_stems:
-                    self._patterns["stems"].append(w)
+                if not w in tag_lemmas:
+                    self._patterns["tags"][tag]["lemmas"].append(w)
+                if not w in all_lemmas:
+                    self._patterns["lemmas"].append(w)
 
-    def _get_stems(self, tag):
+    def _get_lemmas(self, tag):
         """
         Renvoie une liste des raince associé au tag (à l'intention) donné.
 
@@ -300,9 +299,9 @@ class Patterns:
         list
             Une liste de toutes les rainces associés à l'intention.
         """
-        return self._patterns.get("tags").get(tag).get("stems")
+        return self._patterns.get("tags").get(tag).get("lemmas")
 
-    def _get_all_stems(self):
+    def _get_all_lemmas(self):
         """
         Renvoie toutes les racines enregistrés dans l'instance.
 
@@ -311,12 +310,12 @@ class Patterns:
         list
             Une liste de toutes les racines de l'instance.
         """
-        return self._patterns.get("stems")
+        return self._patterns.get("lemmas")
 
-    def _sort_all_stems(self):
-        self._patterns["stems"] = sorted(set(self._get_all_stems()))
+    def _sort_all_lemmas(self):
+        self._patterns["lemmas"] = sorted(set(self._get_all_lemmas()))
         for tag in self._patterns["tags"].keys():
-            self._patterns["tags"][tag]["stems"] = sorted(set(self._get_stems(tag)))
+            self._patterns["tags"][tag]["lemmas"] = sorted(set(self._get_lemmas(tag)))
 
     def _save(self, var, path):
         """
@@ -334,21 +333,21 @@ class Patterns:
 
     def _make_training_data(self):
         """
-        Convertit la correspondance stems <> intentions en un format utilisable
+        Convertit la correspondance lemmas <> intentions en un format utilisable
         par une IA gérée par la librairie Keras.
         """
         training_data = []
         all_tags = self._get_all_tags()
-        all_stems = self._get_all_stems()
+        all_lemmas = self._get_all_lemmas()
         tags_false = [False] * len(all_tags)
-        stems_false = [False] * len(all_stems)
+        lemmas_false = [False] * len(all_lemmas)
         for tag in all_tags:
-            for stem in self._get_stems(tag):
-                stems_bin = list(stems_false)
-                stems_bin[all_stems.index(stem)] = True
+            for lemma in self._get_lemmas(tag):
+                lemmas_bin = list(lemmas_false)
+                lemmas_bin[all_lemmas.index(lemma)] = True
                 tags_bin = list(tags_false)
                 tags_bin[all_tags.index(tag)] = True
-                training_data.append([stems_bin, tags_bin])
+                training_data.append([lemmas_bin, tags_bin])
         random.shuffle(training_data)
         training_data = nparray(training_data, dtype=object)
         return list(training_data[:,0]), list(training_data[:,1])
@@ -375,9 +374,9 @@ class Patterns:
         >>> patterns.convert_sentence("Hello World !")
         array([True, False, False, ...])
         """
-        stems = self._stemming(sentence)
-        stems_bin = [True if w in stems else False for w in self._get_all_stems()]
-        return nparray(stems_bin)
+        lemmas = self._lemmatize(sentence)
+        lemmas_bin = [True if w in lemmas else False for w in self._get_all_lemmas()]
+        return nparray(lemmas_bin)
 
     def choose_answer(self, index):
         """

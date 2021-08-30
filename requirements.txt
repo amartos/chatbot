@@ -5,3 +5,4 @@ numpy
 asyncio
 aiofiles
 websockets
+simplelemma

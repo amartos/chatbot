@@ -1,27 +1,29 @@
 {
     "tags": {
         "noanswer": {
-            "stems": [],
+            "lemmas": [],
             "answers": [
                 "D\u00e9sol\u00e9, mais je ne comprend pas votre phrase."
             ]
         },
         "salutations": {
-            "stems": [
+            "lemmas": [
                 "bien",
                 "bonjour",
                 "hello",
-                "salut"
+                "salut",
+                "salutation"
             ],
             "answers": [
                 "Bienvenue ! \ud83d\ude0a"
             ]
         }
     },
-    "stems": [
+    "lemmas": [
         "bien",
         "bonjour",
         "hello",
-        "salut"
+        "salut",
+        "salutation"
     ]
 }
